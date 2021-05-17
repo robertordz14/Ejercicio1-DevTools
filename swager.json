@@ -1,0 +1,146 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0", 
+      "title": "Reto",
+      "description": "Reto API",
+      "license": {
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT"
+      }
+    },
+    "host": "localhost:8080",
+    "basePath": "/api",    
+    "tags": [
+      {
+        "name": "Tutor",
+        "description": "Tutores"
+      }
+    ],    
+    "schemes": ["http"],
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "paths": {
+        "/tutor": {
+          "get": {
+            "tags": ["Tutor"],
+            "summary": "Get all tutor in system",
+            "responses": {
+              "200": {
+                "description": "OK",
+                "schema": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+            }
+          }
+        },
+        "/newTutor": {
+            "post": {
+              "tags": ["Tutor"],
+              "description": "Create new tutor in system",              
+              "parameters": [
+                {
+                  "name": "user",
+                  "in": "body",
+                  "description": "User that we want to create",
+                  "schema": {
+                    "$ref": "#/definitions/User"
+                  }
+                }
+              ],
+              "produces": ["application/json"],              
+              "responses": {
+                "200": {
+                  "description": "New user is created",
+                  "schema": {
+                    "$ref": "#/definitions/User"
+                }
+            }
+        }
+    }
+},
+"/changeTutor/{id}": {
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "Ingresa el ID",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "put": {
+            "summary": "Update user with give ID",
+            "tags": ["Tutor"],
+            "parameters": [
+              {
+                "name": "user",
+                "in": "body",
+                "description": "User that you change",
+                "schema": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "User is updated",
+                "schema": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+          }
+      }
+  },
+"/deleteTutor/{id}": {          
+          "delete": {
+            "summary": "Delete user with give ID",
+            "tags": ["Tutor"],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "description": "Ingresa el ID"              
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "User is deleted",
+                "schema": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+          }
+      }
+  }
+}, 
+"definitions": {
+    "User": {
+        "required": ["id", "nombre"],
+        "properties": {            
+          "id": {
+            "type": "number"
+            },
+            "nombre": {
+            "type": "string"
+            }
+        },
+        "tutor": {
+            "type": "array",
+            "items": {
+            "type": "string"
+            }
+        }
+    }        
+  },
+  "Users": {
+    "type": "array",
+    "$ref": "#/definitions/User"
+  }
+}
+ 
+  
