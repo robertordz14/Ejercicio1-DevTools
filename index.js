@@ -1,13 +1,25 @@
 const conexion = require('./conexion');
-const express = require('express');
-const app = express();
-const router = express.Router();
-const bodyParser = require('body-parser');
 const cors =  require('cors');
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
+const express = require ('express'), 
+      bodyParser = require ('body-parser'), 
+      jwt = require ('jsonwebtoken'), 
+      config = require('./configs/config');
+      app = express ();
+const router = express.Router();
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+
+  
+
+// 1
+app.set('llave', config.llave);
+// 2 
+app.use (bodyParser.urlencoded ({extended: true}));
+// 3 
+app.use (bodyParser.json ());
+
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
 app.use(cors());
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -27,6 +39,65 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 router.use((req, res, next) => {
     next();
 })
+
+///////////////RETO 3///////////////////
+
+app.get ('/', function (req, res) { 
+    res.send ('Inicio'); 
+});
+
+app.post ('/autenticar', (req, res) => { 
+    if (req.body.usuario === "roberto" && req.body.contrasena === "holamundo") { 
+  const payload = { 
+   check: true 
+  }; 
+  const token = jwt.sign (payload, app.get ('llave'), { 
+   expiresIn: 1440 
+  }); 
+  res.json ({ 
+   mensaje: 'Autenticación correcta', 
+   token: token 
+  }); 
+    } else { 
+        res .json ({mensaje: "Usuario o contraseña incorrecta"}) 
+    } 
+})
+
+
+const rutasProtegidas = express.Router (); 
+rutasProtegidas.use ((req, res, next) => { 
+    const token = req.headers ['access-token']; 
+ 
+    if (token) { 
+      jwt.verify (token, app.get ('llave'), (err , decoded) => {       
+        if (err) { 
+          return res.json ({mensaje: 'Token inválida'});     
+        } else { 
+          req.decoded = decoded;     
+          next (); 
+        } 
+      }); 
+    } else { 
+      res.send ( { 
+          mensaje: 'Token no proveída.' 
+      }); 
+    } 
+});
+
+
+app.get('/datos', rutasProtegidas, (req, res) => {
+    const datos = [
+     { id: 1, nombre: "roberto" },
+     { id: 2, nombre: "joy" },
+     { id: 3, nombre: "ivan" },
+     { id: 3, nombre: "jose" }
+
+    ];
+    
+    res.json(datos);
+   });
+
+///////////////RETO 2///////////////////
 
 router.route('/tutor').get((req, res) => {
     conexion.query("SELECT * FROM tutor", (err, result, fields) => {
